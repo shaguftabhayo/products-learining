@@ -1,4 +1,4 @@
-import { Box, Card, CircularProgress, Divider, Grid, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Divider, Grid, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import './product.css';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -7,16 +7,20 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Autocomplete from '@mui/material/Autocomplete';
 
 const Products = () => {
   const [cartList, setCartList] = useState([]);
   const [openAlert, setOpenAlert] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
   const [productList, setProductList] = useState([]); // Renamed from `products` to `productList`
-  const [isloading, setLoading] = useState(false); // Fixed state naming issue here
+  const [isLoading, setLoading] = useState(false); // Fixed state naming issue here
   const [error, setError] = useState(""); // For error handling
   const navigate = useNavigate();
+  const [categoryOption, setCategoryOption] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState({});
 
-  console.log(isloading, "isLoading");
+  console.log(isLoading, "isLoading");
 
   // Check cart persistence from localStorage on initial load
   useEffect(() => {
@@ -27,26 +31,51 @@ const Products = () => {
   }, []);
 
   // Fetch product data from API
-  const fetchProducts = async () => {
+const fetchProducts = async () => {
+  try {
     setLoading(true);
-    try {
-      const response = await axios.get("https://fakestoreapi.com/products");
-      setProductList(response.data); // Directly use the fetched products
+    const productsData = await axios.get("https://fakestoreapi.com/products");
 
-      if (response.status === 200) {
-        setLoading(false);
-      }
-    } catch (err) {
-      setError("Error fetching products. Please try again later.");
-      console.error("Error fetching products:", err);
+    if (productsData.status === 200) {
       setLoading(false);
+      setProductList(productsData?.data);
+      setAllProducts(productsData?.data);
+
+      const filterCategories = productsData?.data.map((product) => {
+        return {
+          label: product?.category?.toUpperCase(),
+          value: product?.category,        
+        };
+      });
+
+      const uniqueCategories = filterCategories.filter(
+        (item,index,self)=>
+          index === self.findIndex((t) => t.value === item.value)
+      );
+
+      setCategoryOption(uniqueCategories);
+
+    } else {
+      setLoading(true);
     }
-  };
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   // Call fetchProducts once when the component mounts
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    // Filter products based on the selected category
+    let filterProducts = allProducts?.filter((product) => product?.category === categoryFilter?.value);
+  
+    setProductList(filterProducts);
+    console.log(filterProducts, "filterProducts"); // Log the current categoryFilter value
+  }, [categoryFilter]); // Add the dependency here
+  
 
   // Handle adding products to cart
   const cartHandler = (product) => {
@@ -85,12 +114,25 @@ const Products = () => {
 
   return (
     <>
-      <Box className="container mt-3">
+      <Box className="container mt-3 d-flex justify-content-between">
         <TextField
           onChange={searchHandler}
           size="small"
           placeholder="Search items..."
         />
+
+
+<Autocomplete
+       size="small"
+      disablePortal
+      options={categoryOption}
+      sx={{ width: 250 }}
+      onChange={(e, newValue) => {
+        setCategoryFilter(newValue);
+        
+      }}
+      renderInput={(params) => <TextField {...params} label="Categories" />}
+    />
       </Box>
 
       <Snackbar
@@ -119,7 +161,7 @@ const Products = () => {
       )}
 
       <Grid container className="container mt-3 mb-2" justifyContent="center" alignItems="stretch">
-        {isloading ? (
+        {isLoading ? (
           <Typography variant="h6" sx={{ textAlign: 'center', width: '100%' }}>
             Loading products...
           </Typography>

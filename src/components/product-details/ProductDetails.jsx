@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { BadgeOutlined, Star, StarBorder } from '@mui/icons-material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShareIcon from '@mui/icons-material/Share';
 
 // Styled components for enhanced design
 const ProductImage = styled('img')({
@@ -78,7 +81,7 @@ const ProductDetails = () => {
                   <Typography
                     variant="h4"
                     gutterBottom
-                    sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}
+                    sx={{color:"#1976d2", fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' } }}
                   >
                     {productList?.title}
                   </Typography>
@@ -182,9 +185,20 @@ const ProductDetails = () => {
                     <BadgeOutlined sx={{ fontSize: '1rem', marginRight: 1, color: 'primary.main' }} />
                     <Typography variant="body2">{productList?.id}</Typography>
                   </Box>
+                  <Box className="gap-4 d-flex">
+                      <Button variant='outlined'>
+                        <FavoriteBorderIcon />
+                      </Button> 
+                      
+                      <Button variant='outlined'>
+                        <AddShoppingCartIcon/>
+                      </Button>
+                      <Button variant='outlined'>
+                        <ShareIcon/>
+                      </Button>
+                    </Box>
                 </Box>
-              </Grid>
-
+                </Grid>
             </Grid>
           </Box>
         </Box>
