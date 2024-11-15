@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -18,6 +18,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useSelector } from 'react-redux';
+import { logDOM } from '@testing-library/react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -59,9 +61,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const [drawerOpen, setDrawerOpen] = React.useState(false); // Drawer state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state
+  const [cartItems, setCartItems] = useState([]);
+  const count = useSelector((state)=> state.counter)
+
+  console.log(count, "count");
+  
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -108,7 +115,9 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}><Link to="/sign-in">My account</Link></MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <Link to="/sign-in">My account</Link>
+      </MenuItem>
     </Menu>
   );
 
@@ -131,7 +140,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={1} color="error">
+          <Badge badgeContent={count?.value} color="error">
             <ShoppingCartIcon onClick={toggleDrawer(true)} />
           </Badge>
         </IconButton>
@@ -189,7 +198,7 @@ export default function PrimarySearchAppBar() {
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={1} color="error">
+              <Badge badgeContent={count?.value} color="error">
                 <ShoppingCartIcon onClick={toggleDrawer(true)} />
               </Badge>
             </IconButton>
@@ -230,10 +239,17 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      
+
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-          <Typography variant="h6" sx={{ p: 2 }}>Shopping Cart</Typography>
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <Typography variant="h6" sx={{ p: 2 }}>
+            Shopping Cart
+          </Typography>
           {/* Add cart items or any content here */}
         </Box>
       </Drawer>

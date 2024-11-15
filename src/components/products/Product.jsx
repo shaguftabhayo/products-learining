@@ -8,6 +8,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../slices/add-cart/addCartSlices';
 
 const Products = () => {
   const [cartList, setCartList] = useState([]);
@@ -19,6 +21,8 @@ const Products = () => {
   const navigate = useNavigate();
   const [categoryOption, setCategoryOption] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState({});
+
+  const dispatch = useDispatch()
 
   console.log(isLoading, "isLoading");
 
@@ -200,11 +204,8 @@ const fetchProducts = async () => {
     <FavoriteIcon sx={{ fontSize: 25, color: '#1976d2' }} /> {/* Apply the color here */}
   </Tooltip>
   <Tooltip title="Add to Cart">
-    <ShoppingCartIcon
-      onClick={() => {
-        cartHandler(product);
-        
-      }}
+    <ShoppingCartIcon onClick={()=>dispatch(addToCart())} 
+      
       sx={{ fontSize: 25, color: '#1976d2' }} // Apply the color here
     />
   </Tooltip>
@@ -227,7 +228,10 @@ export default Products;
 
 
 
-
+// onClick={() => {
+//   cartHandler(product);
+    
+//   }}
 
 
 // import { Box, Card, Divider, Snackbar, SnackbarContent, Typography } from '@mui/material'

@@ -10,6 +10,9 @@ import SignUp from './components/auth/sign-up/SignUp.jsx';
 import ErrorPage from './components/ErrorPage/ErrorPage.jsx';
 import ProductDetails from './components/product-details/ProductDetails.jsx';
 import MainLayout from './components/layout/MainLayout.jsx';
+import { Provider } from 'react-redux';
+import { store } from './components/store.js';
+
 
 const router = createBrowserRouter([
   {
@@ -39,4 +42,8 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<RouterProvider router={router} />);
+root.render(
+<Provider store={store}>
+<RouterProvider router={router} />
+</Provider>
+);
