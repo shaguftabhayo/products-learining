@@ -5,7 +5,6 @@ import PrimarySearchAppBar from './components/Header/header.jsx';
 import Products from './components/products/Product.jsx';
 
 
-
 function App() {
   return (
     <>
